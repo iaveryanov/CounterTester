@@ -21,7 +21,7 @@ public class ConcurrencyTester {
                 new AtomicCounter(),
                 new LongAdderCounter(),
                 new ConcurrentCounter(),
-//                new FairCounter()
+                new FairCounter()
         };
         int[] threads = {1,2,3,4,10,100};
 
