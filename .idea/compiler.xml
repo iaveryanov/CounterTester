@@ -25,6 +25,9 @@
         <module name="CounterTesterJdk8" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="CounterTesterJdk8" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
