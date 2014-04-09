@@ -10,28 +10,35 @@ public class ReentrantCounter implements ICounter {
 
     private ReentrantLock lock = new ReentrantLock();
 
+    public ReentrantCounter() {
+        this(0);
+    }
+
     public ReentrantCounter(long initialVal) {
         this.counter = initialVal;
     }
 
     @Override
-    public long dec() {
+    public void set(long value) {
+        this.counter = value;
+    }
+
+    @Override
+    public void dec() {
         lock.lock();
         try {
-            return --counter;
+            --counter;
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public long decUntilZero() {
+    public void decUntilZero() {
         lock.lock();
         try {
-            if (counter == 0) {
-                return counter;
-            }
-            return --counter;
+            if (counter == 0) return;
+            --counter;
         } finally {
             lock.unlock();
         }

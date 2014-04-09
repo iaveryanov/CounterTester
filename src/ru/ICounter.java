@@ -2,9 +2,11 @@ package ru;
 
 public interface ICounter {
 
-    long dec();
+    void set(long value);
 
-    long decUntilZero();
+    void dec();
+
+    void decUntilZero();
 
     long get();
 

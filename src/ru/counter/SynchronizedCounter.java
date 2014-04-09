@@ -6,21 +6,28 @@ public class SynchronizedCounter implements ICounter {
 
     private long counter;
 
+    public SynchronizedCounter() {
+        this(0);
+    }
+
     public SynchronizedCounter(long initialVal) {
         this.counter = initialVal;
     }
 
     @Override
-    public synchronized long dec() {
-        return --counter;
+    public synchronized void set(long value) {
+        this.counter = value;
     }
 
     @Override
-    public synchronized long decUntilZero() {
-        if (counter == 0) {
-            return counter;
-        }
-        return --counter;
+    public synchronized void dec() {
+        --counter;
+    }
+
+    @Override
+    public synchronized void decUntilZero() {
+        if (counter == 0) return;
+        --counter;
     }
 
     @Override

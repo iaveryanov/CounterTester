@@ -13,64 +13,34 @@ public class ConcurrencyTester {
     public static void main(String[] args) throws InterruptedException {
 
         final int initialVal = 400000000;
+        ICounter[] counters = {
+                new BrokenCounter(),
+                new VolatileCounter(),
+                new SynchronizedCounter(),
+                new ReentrantCounter(),
+                new AtomicCounter(),
+                new LongAdderCounter(),
+                new ConcurrentCounter(),
+//                new FairCounter()
+        };
         int[] threads = {1,2,3,4,10,100};
 
         Semaphore semaphore = new Semaphore(1);
 
-        // BrokenCounter
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new BrokenCounter(initialVal), threadPoolSize);
-            semaphore.release();
+        for (ICounter c : counters) {
+            for (int t : threads) {
+                semaphore.acquire();
+                c.set(initialVal);
+                test(c, t);
+                semaphore.release();
+            }
         }
-
-        // VolatileCounter
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new VolatileCounter(initialVal), threadPoolSize);
-            semaphore.release();
-        }
-
-        // SynchronizedCounter
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new SynchronizedCounter(initialVal), threadPoolSize);
-            semaphore.release();
-        }
-
-        // ReentrantCounter
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new ReentrantCounter(initialVal), threadPoolSize);
-            semaphore.release();
-        }
-
-        // AtomicCounter
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new AtomicCounter(initialVal), threadPoolSize);
-            semaphore.release();
-        }
-
-        // LongAdder
-        for (int threadPoolSize : threads) {
-            semaphore.acquire();
-            test(new LongAdderCounter(initialVal), threadPoolSize);
-            semaphore.release();
-        }
-
-//        // AtomicCounter
-//        for (int threadPoolSize : threads) {
-//            semaphore.acquire();
-//            test(new FairCounter(initialVal), threadPoolSize);
-//            semaphore.release();
-//        }
     }
 
     private static void test(final ICounter counter, int threadPoolSize)
             throws InterruptedException {
 
-        System.out.println("next test");
+//        System.out.println("next test");
         final long initialVal = counter.get();
         final long opsPerThread = initialVal / threadPoolSize;
 
@@ -84,7 +54,7 @@ public class ConcurrencyTester {
                 @Override
                 public void run() {
                     for (int i = 0; i < opsPerThread; i++) {
-                        counter.decUntilZero();
+                        counter.dec();
                     }
                     latch.countDown();
                 }
@@ -92,13 +62,13 @@ public class ConcurrencyTester {
             });
         }
 
-        System.out.println("Please, waiting...");
+//        System.out.println("Please, waiting...");
         latch.await();
         long elapsed = System.currentTimeMillis() - startedAt;
         executor.shutdown();
-        System.out.println("Done.");
+//        System.out.println("Done.");
 
-        printReportToConsole(initialVal, threadPoolSize, opsPerThread, counter, elapsed);
+//        printReportToConsole(initialVal, threadPoolSize, opsPerThread, counter, elapsed);
         printReportToFile(initialVal, threadPoolSize, opsPerThread, counter, elapsed);
     }
 
@@ -138,6 +108,7 @@ public class ConcurrencyTester {
                 header.append("--------------------|");
                 header.append("--------------------|");
                 header.append("--------------------|");
+                System.out.println(header);
                 pw.println(header);
             }
 
@@ -153,7 +124,9 @@ public class ConcurrencyTester {
             line.append(String.format("%20s|", counter.getMissedCount()));
             line.append(String.format("%20s|", elapsed));
 
-            pw.println(line.toString());
+            String lineStr = line.toString();
+            System.out.println(lineStr);
+            pw.println(lineStr);
             pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

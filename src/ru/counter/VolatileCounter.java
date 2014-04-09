@@ -9,21 +9,28 @@ public class VolatileCounter implements ICounter {
 
     private volatile long counter;
 
+    public VolatileCounter() {
+        this(0);
+    }
+
     public VolatileCounter(long initialVal) {
         this.counter = initialVal;
     }
 
     @Override
-    public long dec() {
-        return --counter;
+    public void set(long value) {
+        this.counter = value;
     }
 
     @Override
-    public long decUntilZero() {
-        if (counter == 0) {
-            return counter;
-        }
-        return --counter;
+    public void dec() {
+        --counter;
+    }
+
+    @Override
+    public void decUntilZero() {
+        if (counter == 0) return;
+        --counter;
     }
 
     @Override

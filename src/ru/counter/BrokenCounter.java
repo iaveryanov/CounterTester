@@ -9,21 +9,28 @@ public class BrokenCounter implements ICounter {
 
     private long counter;
 
+    public BrokenCounter() {
+        this(0);
+    }
+
     public BrokenCounter(long initialVal) {
         this.counter = initialVal;
     }
 
     @Override
-    public long dec() {
-        return --counter;
+    public void set(long value) {
+        this.counter = value;
     }
 
     @Override
-    public long decUntilZero() {
-        if (counter == 0) {
-            return counter;
-        }
-        return --counter;
+    public void dec() {
+        --counter;
+    }
+
+    @Override
+    public void decUntilZero() {
+        if (counter == 0) return;
+        --counter;
     }
 
     @Override

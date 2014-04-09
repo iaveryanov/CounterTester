@@ -6,7 +6,11 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class LongAdderCounter implements ICounter {
 
-    private final LongAdder counter;
+    private LongAdder counter;
+
+    public LongAdderCounter() {
+        this(0);
+    }
 
     public LongAdderCounter(long initialVal) {
         this.counter = new LongAdder();
@@ -14,14 +18,20 @@ public class LongAdderCounter implements ICounter {
     }
 
     @Override
-    public long dec() {
-        counter.decrement();
-        return 0;
+    public void set(long value) {
+        this.counter = new LongAdder();
+        counter.add(value);
     }
 
     @Override
-    public long decUntilZero() {
-        return 0;  //TODO not implemented yet
+    public void dec() {
+        counter.decrement();
+    }
+
+    @Override
+    public void decUntilZero() {
+        // todo not implement yet, just decrement
+        counter.decrement();
     }
 
     @Override
@@ -32,18 +42,5 @@ public class LongAdderCounter implements ICounter {
     @Override
     public long getMissedCount() {
         return 0;
-    }
-
-    public static void main(String[] args) {
-        LongAdder l = new LongAdder();
-        l.add(10);
-        System.out.println(l.longValue());
-        System.out.println(l.sum());
-        l.add(10);
-        l.add(-10);
-        System.out.println(l.longValue());
-        System.out.println(l.sum());
-
-
     }
 }

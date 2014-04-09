@@ -10,7 +10,12 @@ public class AtomicCounter implements ICounter {
     private final AtomicLong counter;
 
     // счетчик холостого хода
+    // overhead!!!
     private final AtomicLong missedCount;
+
+    public AtomicCounter() {
+        this(0);
+    }
 
     public AtomicCounter(long initialVal) {
         counter = new AtomicLong(initialVal);
@@ -19,20 +24,25 @@ public class AtomicCounter implements ICounter {
 
 
     @Override
-    public long dec() {
-        return counter.decrementAndGet();
+    public void set(long value) {
+        counter.set(value);
     }
 
     @Override
-    public long decUntilZero() {
+    public void dec() {
+        counter.decrementAndGet();
+    }
+
+    @Override
+    public void decUntilZero() {
         while (true) {
             long cur = counter.get();
             if (cur == 0) {
-                return cur;
+                return;
             }
             long next = cur - 1;
             if (counter.compareAndSet(cur, next)) {
-                return next;
+                return;
             }
             missedCount.incrementAndGet();
         }
